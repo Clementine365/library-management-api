@@ -8,16 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Tobal001/Team-13-final-Project.git"
+    "url": "https://github.com/Clementine365/library-management-api"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Tobal001/Team-13-final-Project/issues"
+    "url": "https://github.com/Clementine365/library-management-api"
   },
-  "homepage": "https://github.com/Tobal001/Team-13-final-Project#readme",
-  "description": "",
+  "homepage": "https://github.com/Clementine365/library-management-api#readme",
   "dependencies": {
     "autogen": "^0.0.1",
     "body-parser": "^2.2.0",
@@ -32,5 +31,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
-  }
+  },
+  "description": ""
 }
