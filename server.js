@@ -23,7 +23,6 @@ mongodb.initDb((err) => {
     }
     else {
          // If the database initializes successfully, start the server and listen on the specified port.
-         // If the database initializes successfully, start the server and listen on the specified port.
         app.listen(port, () => {console.log(`Database is listening and node Running on port ${port}`)});
     }
 });
