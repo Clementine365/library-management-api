@@ -1,11 +1,14 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const booksRoutes = require('./routes/books'); // import the books route
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app
-    .use(bodyParser.json())
+// Routes
+app.use('/books', booksRoutes);  // Register the books routes
+
+app.use(bodyParser.json())
     .use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader(
