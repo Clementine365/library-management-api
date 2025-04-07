@@ -1,31 +1,41 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const booksRoutes = require('./routes/books'); // import the books route
-
+const booksRoutes = require('./routes/books');
+const swagger = require('./config/swagger');
+const mongodb = require('./config/db');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Routes
-app.use('/books', booksRoutes);  // Register the books routes
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Z-key'
+    );
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    next();
+});
 
-app.use(bodyParser.json())
-    .use((req, res, next) => {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader(
-            'Access-Control-Allow-Origin',
-            'Origin, X-Requested-With, Content-Type, Accept, Z-key'
-        );
-        res.setHeader('Access-Control-Allow-Origin', 'GET, POST, PUT, DELETE, OPTIONS');
-        next();
-    });
+// Add swagger documentation
+swagger(app);
+
+// Redirect root to API documentation
+app.get('/', (req, res) => {
+    res.redirect('/api-docs');
+});
+
+// Routes
+app.use('/books', booksRoutes);
 app.use('/', require('./routes'));
 
 mongodb.initDb((err) => {
     if (err) {
         console.log(err);
-    }
-    else {
-         // If the database initializes successfully, start the server and listen on the specified port.
-        app.listen(port, () => {console.log(`Database is listening and node Running on port ${port}`)});
+    } else {
+        app.listen(port, () => {
+            console.log(`Database is connected and server is running on port ${port}`);
+            console.log(`Swagger documentation available at http://localhost:${port}/api-docs`);
+        });
     }
 });
