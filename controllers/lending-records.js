@@ -1,17 +1,17 @@
-const mongodb = require('../data/database');
+const mongodb = require('../config/db');
 const ObjectId = require('mongodb').ObjectId;
 
 const getAll = async (req, res) => {
-    //#swagger.tags=['LendingRecord']
+    //#swagger.tags=['Lending Record']
     try {
       const result = await mongodb
         .getDatabase()
-        .db('')
-        .collection('')
+        .db()
+        .collection('LendingRecords')
         .find();
   
       const Lendingrecord = await result.toArray();
-      res.status(200).json(authors);
+      res.status(200).json(lendingRecord);
     } catch (err) {
       res
         .status(500)
@@ -20,18 +20,18 @@ const getAll = async (req, res) => {
   };
 
   const getSingle = async (req, res) => {
-    //#swagger.tags=['LendingRecord']
+    //#swagger.tags=['Lending Record']
     try {
       const recordId = new ObjectId(req.params.id);
       const result = await mongodb
         .getDatabase()
         .db('')
-        .collection('')
+        .collection('LendingRecords')
         .find({ _id: recordId });
   
       const authors = await result.toArray();
       if (!authors.length) {
-        return res.status(404).json({ message: 'Lending Record not found not found' });
+        return res.status(404).json({ message: 'Lending Record not found' });
       }
   
       res.status(200).json(authors[0]);
@@ -58,7 +58,7 @@ const getAll = async (req, res) => {
       const response = await mongodb
         .getDatabase()
         .db('')
-        .collection('')
+        .collection('LendingRecords')
         .insertOne(lendingRecord);
   
       if (response.acknowledged) {
@@ -74,7 +74,7 @@ const getAll = async (req, res) => {
   };
 
   const updateLendingRecord = async (req, res) => {
-    //#swagger.tags=['LendingRecord']
+    //#swagger.tags=['Lending Record']
     try {
       const recordId = new ObjectId(req.params.id);
       const lendingRecord = {
@@ -89,7 +89,7 @@ const getAll = async (req, res) => {
       const response = await mongodb
         .getDatabase()
         .db('')
-        .collection('')
+        .collection('LendingRecords')
         .replaceOne({ _id: recordId }, lendingRecord);
   
       if (response.matchedCount === 0) {
@@ -114,8 +114,8 @@ const getAll = async (req, res) => {
       const recordId = new ObjectId(req.params.id);
       const response = await mongodb
         .getDatabase()
-        .db('project02')
-        .collection('') 
+        .db()
+        .collection('LendingRecords') 
         .deleteOne({ _id: recordId });
   
       if (response.deletedCount > 0) {
