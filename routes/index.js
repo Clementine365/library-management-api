@@ -1,17 +1,12 @@
 const passport = require('passport')
 const router = require('express').Router();
 
-// Router for users
 
-// Router for staff
-
-// Router for books
-
-// Router for lending records
 router.use('/', require('./swagger'));
 
-router.use('/books', booksRoutes);
+router.use('/books', require('./books'));
 router.use('/users', require('./users'));
+router.use('/lending-records', require('./lending-records'))
 
 router.get('/login', passport.authenticate('github'), (req, res) => {});
 
