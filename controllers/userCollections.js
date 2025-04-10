@@ -1,4 +1,4 @@
-const mongodb = require('../data/database');
+const mongodb = require('../config/db');
 const ObjectId = require('mongodb').ObjectId;
 
 const createUser = async (profile) => {

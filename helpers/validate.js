@@ -1,28 +1,24 @@
-// const Validator = require('validatorjs');
-// const validator = async (body, rules, customMessages, callback) => {
-//     const validation = new Validator(body, rules, customMessages);
-//     validation.passes(() => callback(null, true));
-//     validation.fails(() => callback(validation.errors, false));
-// };
-// module.exports = validator;
-
-// Ensure that validatorjs is required
 const Validator = require('validatorjs');
 
-// Create the validation function
+/**
+ * Validates request data using validatorjs.
+ *
+ * @param {Object} body - The data object to validate.
+ * @param {Object} rules - Validation rules.
+ * @param {Object} [customMessages={}] - Optional custom error messages.
+ * @returns {Promise<boolean>} Resolves if valid, rejects with errors if invalid.
+ */
 const validator = async (body, rules, customMessages = {}) => {
-    // Ensure Validator is loaded
-    if (!Validator) {
-        throw new Error('ValidatorJS is not properly imported');
-    }
+  if (!Validator) {
+    throw new Error('ValidatorJS is not properly imported');
+  }
 
-    const validation = new Validator(body, rules, customMessages);
+  const validation = new Validator(body, rules, customMessages);
 
-    // Return a Promise to handle validation asynchronously
-    return new Promise((resolve, reject) => {
-        validation.passes(() => resolve(true));  // Resolve if validation passes
-        validation.fails(() => reject(validation.errors));  // Reject if validation fails
-    });
+  return new Promise((resolve, reject) => {
+    validation.passes(() => resolve(true));
+    validation.fails(() => reject(validation.errors));
+  });
 };
 
 module.exports = validator;

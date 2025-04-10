@@ -1,10 +1,11 @@
 const { ObjectId } = require('mongodb');
-const { getDb } = require('../data/database');
+const { getDb } = require('../config/db');
 
 const collection = () => getDb().collection('books');
 
 // Create a new book
 exports.createBook = async (req, res) => {
+  //#swagger.tags=['Books']
   const { title, author, status, location } = req.body;
 
   try {
@@ -18,6 +19,7 @@ exports.createBook = async (req, res) => {
 
 // Get all books with optional filters
 exports.getBooks = async (req, res) => {
+  //#swagger.tags=['Books']
   const { title, author, status } = req.query;
 
   try {
@@ -36,6 +38,7 @@ exports.getBooks = async (req, res) => {
 
 // Get a book by ID
 exports.getBookById = async (req, res) => {
+  //#swagger.tags=['Books']
   try {
     const book = await collection().findOne({ _id: new ObjectId(req.params.bookId) });
     if (!book) return res.status(404).json({ msg: 'Book not found' });
@@ -48,6 +51,7 @@ exports.getBookById = async (req, res) => {
 
 // Update a book
 exports.updateBook = async (req, res) => {
+  //#swagger.tags=['Books']
   const { title, author, status, location } = req.body;
 
   try {
@@ -68,6 +72,7 @@ exports.updateBook = async (req, res) => {
 
 // Delete a book
 exports.deleteBook = async (req, res) => {
+  //#swagger.tags=['Books']
   try {
     const result = await collection().deleteOne({ _id: new ObjectId(req.params.bookId) });
     if (result.deletedCount === 0) return res.status(404).json({ msg: 'Book not found' });
