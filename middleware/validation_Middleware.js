@@ -26,7 +26,38 @@ const saveUser = async (req, res, next) => {
     }
 };
 
+const saveLendingRecord = (req, res, next) => {
+    try {
+      const validationRule = {
+        userId: 'required|ObjectId',
+        bookId: 'required|string',
+        nationality: 'required|string',
+        genres: 'required|array', // fixed typo: 'require' → 'required'
+        bio: 'required|string',
+      };
+  
+      validator(req.body, validationRule, {}, (err, status) => {
+        if (!status) {
+          return res.status(412).send({
+            success: false,
+            message: 'Validation failed',
+            data: err,
+          });
+        }
+        next();
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: 'Middleware validation error',
+        error: error.message,
+      });
+    }
+  };
 
 
 
-module.exports = {saveUser};
+module.exports = {
+    saveUser,
+    saveLendingRecord
+};
