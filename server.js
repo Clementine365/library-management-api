@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const booksRoutes = require('./routes/books');
-const swagger = require('./config/swagger');
 const mongodb = require('./config/db');
 const app = express();
 const passport = require('passport');
@@ -11,6 +10,7 @@ const session = require('express-session');
 const GitHubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
 const port = process.env.PORT || 3000;
+const setupSwagger = require('./config/swagger');
 
 
 
@@ -100,7 +100,7 @@ app.get(
 );
 
 // Add swagger documentation
-swagger(app);
+setupSwagger(app);
 
 
 // Redirect root to API documentation

@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongodb');
-const { getDb } = require('../data/database');
+const { getDb } = require('../config/db');
 
 const collection = () => getDb().collection('books');
 
