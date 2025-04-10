@@ -1,7 +1,5 @@
 const validator = require('../helpers/validate');
 
-
-
 const saveUser = async (req, res, next) => {
     // Define the validation rules
     const validationRule = {
