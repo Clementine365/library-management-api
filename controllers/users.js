@@ -1,5 +1,5 @@
 const { object } = require('webidl-conversions');
-const mongodb = require('../data/database');
+const mongodb = require('../config/db');
 const ObjectId = require('mongodb').ObjectId;
 
 
