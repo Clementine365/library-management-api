@@ -11,7 +11,7 @@ const doc = {
     },
   },
   host: "localhost:3000",
-  schemes: ["http", "https"],
+  schemes: ["http"],
   tags: [
     {
       name: "Books",
@@ -31,17 +31,14 @@ const doc = {
     },
   ],
   securityDefinitions: {
-    sessionAuth: {
-      type: "apiKey",
-      in: "cookie",
-      name: "connect.sid",
-      description: "Session cookie for authentication",
-    },
-    apiKeyAuth: {
-      type: "apiKey",
-      in: "header",
-      name: "X-API-Key",
-      description: "API key for staff authentication",
+    GitHubOAuth: {
+      type: "oauth2",
+      flow: "accessCode",
+      authorizationUrl: "https://github.com/login/oauth/authorize",
+      tokenUrl: "https://github.com/login/oauth/access_token",
+      scopes: {
+        "read:user": "Read user info",
+      },
     },
   },
   definitions: {
@@ -104,14 +101,81 @@ const doc = {
         },
       },
     },
+    LoginResponse: {
+      type: "object",
+      properties: {
+        success: {
+          type: "boolean",
+          example: true,
+        },
+        message: {
+          type: "string",
+          example: "You are now logged in with a test account",
+        },
+        user: {
+          type: "object",
+          properties: {
+            id: {
+              type: "string",
+              example: "test-user-id",
+            },
+            username: {
+              type: "string",
+              example: "testuser",
+            },
+            displayName: {
+              type: "string",
+              example: "Test User",
+            },
+          },
+        },
+      },
+    },
+  },
+  paths: {
+    "/test-login": {
+      get: {
+        tags: ["Authentication"],
+        summary: "Login with a test account (for development/testing only)",
+        responses: {
+          200: {
+            description: "Login successful",
+            schema: {
+              $ref: "#/definitions/LoginResponse",
+            },
+          },
+        },
+      },
+    },
+    "/login": {
+      get: {
+        tags: ["Authentication"],
+        summary: "Login with GitHub",
+        description: "Redirects to GitHub for authentication",
+        responses: {
+          302: {
+            description: "Redirect to GitHub",
+          },
+        },
+      },
+    },
+    "/logout": {
+      get: {
+        tags: ["Authentication"],
+        summary: "Logout the current user",
+        description: "Ends the user session and redirects to home",
+        responses: {
+          302: {
+            description: "Redirect to home page after logout",
+          },
+        },
+      },
+    },
   },
 };
 
 const outputFile = "./swagger.json";
 const endpointsFiles = [
-  "./routes/books.js",
-  "./routes/users.js",
-  "./routes/staff.js",
   "./routes/index.js",
 ];
 
