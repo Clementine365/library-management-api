@@ -6,13 +6,15 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAll = async (req, res) => {
     //#swagger.tags = ['users']
-    
     try {
-        const db = mongodb.getDatabase().db('team13_project');
-        const lists = await db.collection('user').find().toArray();
+        const result = await mongodb
+            .getDb()
+            .collection('users')
+            .find()
+            .toArray();
         
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(lists);
+        res.status(200).json(result);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -31,7 +33,7 @@ const getsingle = async (req, res) => {
     try {
         // Convert the car ID to an ObjectId
         const userId = new ObjectId(req.params.id);
-        const db = mongodb.getDatabase().db('team13_project');
+        const db = mongodb.getDb().db('team13_project');
         
         // Try to find the user in the database
         const result = await db.collection('users').find({ _id: userId }).toArray();
@@ -67,7 +69,7 @@ const createUser = async(req, res) => {
         
 
     };
-    const response = await mongodb.getDatabase().db('team13_project').collection('users').insertOne(car);
+    const response = await mongodb.getDb().db('team13_project').collection('users').insertOne(car);
     if (response.acknowledged) {
         res.status (204).send();
     } else {
@@ -93,7 +95,7 @@ const updateUser = async(req, res) => {
         
         
     };
-    const response = await mongodb.getDatabase().db('team13_project').collection('users').replaceOne({_id: userId}, user);
+    const response = await mongodb.getDb().db('team13_project').collection('users').replaceOne({_id: userId}, user);
     if (response.modifiedCount > 0) {
         res.status (204).send();
     } else {
@@ -121,7 +123,7 @@ const deleteUser = async (req, res) => {
         
         // Perform the delete operation
         const response = await mongodb
-            .getDatabase()
+            .getDb()
             .db('team13_project')
             .collection('user')
             .deleteOne({ _id: objectId });

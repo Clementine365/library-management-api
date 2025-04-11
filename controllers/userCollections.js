@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 const createUser = async (profile) => {
     try {
-        const db = mongodb.getDatabase().db('team13_project'); // Connect to the correct DB
+        const db = mongodb.getDb().db('team13_project'); // Connect to the correct DB
         const usersCollection = db.collection('login_records_github'); // Assuming 'users' collection
 
         // Insert or update the user (upsert: true)
@@ -27,7 +27,7 @@ const createUser = async (profile) => {
 
 const getUserByGitHubId = async (githubId) => {
     try {
-        const db = mongodb.getDatabase().db('team13_project');
+        const db = mongodb.getDb().db('team13_project');
         const usersCollection = db.collection('login_records_github');
         
         const user = await usersCollection.findOne({ githubId });
