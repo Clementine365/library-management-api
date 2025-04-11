@@ -16,7 +16,7 @@ router.post(
 router.get("/", bookController.getBooks);
 
 // Route to get a specific book by its ID
-router.get("/:id", bookController.getBookById);
+router.get("/:bookId", bookController.getBookById);
 
 // Route to update a book by its ID with authentication and validation
 router.put(
