@@ -14,6 +14,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 
 const mongodb = require('./config/db'); 
 const indexRoutes = require('./routes/index'); 
+const swagger = require('./config/swagger'); // Updated import
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -36,12 +37,15 @@ app.use(
 // -------- Session Configuration --------
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: true, 
     store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
+      mongoUrl: process.env.MONGODB_URL, // Changed from MONGODB_URI to match your .env
+      dbName: process.env.DB_NAME,
       ttl: 14 * 24 * 60 * 60, // 14 days
+      autoRemove: 'native',
+      touchAfter: 24 * 3600 // Only update the session every 24 hours unless the data changes
     }),
   })
 );
@@ -60,6 +64,9 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, POST, PUT, DELETE, OPTIONS');
   next();
 });
+
+// Add swagger documentation
+app.use('/api-docs', swagger.serve, swagger.setup);
 
 // =======================================================
 //                PASSPORT STRATEGY

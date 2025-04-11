@@ -10,7 +10,8 @@ const initDb = async (callback) => {
     }
 
     try {
-        const client = await MongoClient.connect(process.env.MONGODB_URI);
+        // Changed MONGODB_URI to MONGODB_URL to match .env
+        const client = await MongoClient.connect(process.env.MONGODB_URL);
         _db = client.db(process.env.DB_NAME);
         callback(null, _db);
     } catch (err) {
