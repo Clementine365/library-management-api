@@ -217,7 +217,66 @@ const doc = {
       },
     },
   },
+
+Book: {
+  type: "object",
+  required: ["title", "author", "location"],
+  properties: {
+    title: { type: "string", example: "The Great Gatsby" },
+    author: { type: "string", example: "F. Scott Fitzgerald" },
+    status: {
+      type: "string",
+      enum: ["available", "borrowed"],
+      example: "available",
+    },
+    location: { type: "string", example: "Shelf B2" },
+    createdAt: {
+      type: "string",
+      format: "date-time",
+      example: "2024-04-01T12:00:00Z",
+    },
+    updatedAt: {
+      type: "string",
+      format: "date-time",
+      example: "2024-04-02T09:30:00Z",
+    },
+  },
+},
+BookPartial: {
+  type: "object",
+  properties: {
+    title: { type: "string", example: "The Great Gatsby" },
+    author: { type: "string", example: "F. Scott Fitzgerald" },
+    status: {
+      type: "string",
+      enum: ["available", "borrowed"],
+      example: "borrowed",
+    },
+    location: { type: "string", example: "Shelf C3" },
+  },
+},
+BookResponse: {
+  type: "object",
+  properties: {
+    success: { type: "boolean", example: true },
+    data: { $ref: "#/definitions/Book" },
+  },
+},
+BookListResponse: {
+  type: "object",
+  properties: {
+    success: { type: "boolean", example: true },
+    count: { type: "integer", example: 2 },
+    data: {
+      type: "array",
+      items: { $ref: "#/definitions/Book" },
+    },
+  },
+},
+
 };
+
+
 
 const outputFile = "./swagger-output.json";
 const endpointsFiles = [
