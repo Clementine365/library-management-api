@@ -4,20 +4,29 @@ const staffController = require("../controllers/staffController");
 const validation = require("../middleware/validation_Middleware");
 const auth = require("../middleware/authenticate");
 
+// GET all staff (with optional filters)
+router.get("/", staffController.getAll);
+
+// GET single staff by ID
+router.get("/:id", staffController.getSingle);
+
+// POST to create new staff - moved from root route
 router.post(
   "/",
   auth.isAuthenticated,
   validation.saveStaff,
   staffController.createStaff
 );
-router.get("/", staffController.getStaff);
-router.get("/:staffId", staffController.getStaffById);
+
+// PUT to update staff by ID
 router.put(
-  "/:staffId",
+  "/:id",
   auth.isAuthenticated,
   validation.saveStaff,
   staffController.updateStaff
 );
-router.delete("/:staffId", auth.isAuthenticated, staffController.deleteStaff);
+
+// DELETE staff by ID
+router.delete("/:id", auth.isAuthenticated, staffController.deleteStaff);
 
 module.exports = router;

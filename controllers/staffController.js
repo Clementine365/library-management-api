@@ -3,138 +3,111 @@ const { getDb } = require("../config/db");
 
 const collection = () => getDb().collection("staff");
 
+// Get all staff members
+exports.getAll = async (req, res) => {
+  //#swagger.tags=['Staff']
+  try {
+    const result = await collection().find();
+    const staff = await result.toArray();
+
+    res.status(200).json(staff);
+  } catch (err) {
+    res.status(500).json({
+      message: "Error fetching staff members",
+      error: err.message,
+    });
+  }
+};
+
+// Get a single staff member by ID
+exports.getSingle = async (req, res) => {
+  //#swagger.tags=['Staff']
+  try {
+    const staffId = new ObjectId(req.params.id);
+    const result = await collection().find({ _id: staffId });
+
+    const staffMembers = await result.toArray();
+    if (!staffMembers.length) {
+      return res.status(404).json({ message: "Staff member not found" });
+    }
+
+    res.status(200).json(staffMembers[0]);
+  } catch (err) {
+    res.status(400).json({
+      message: "Invalid staff ID or fetch error",
+      error: err.message,
+    });
+  }
+};
+
 // Create a new staff member
 exports.createStaff = async (req, res) => {
   //#swagger.tags=['Staff']
-  const {
-    first_name,
-    last_name,
-    email,
-    phone,
-    position,
-    department,
-    hire_date,
-    salary,
-    is_admin,
-    status,
-  } = req.body;
-
   try {
-    const result = await collection().insertOne({
-      first_name,
-      last_name,
-      email,
-      phone,
-      position,
-      department,
-      hire_date,
-      salary,
-      is_admin,
-      status,
+    const staff = {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      email: req.body.email,
+      phone: req.body.phone,
+      position: req.body.position,
+      department: req.body.department,
+      hire_date: req.body.hire_date,
+      salary: req.body.salary,
+      is_admin: req.body.is_admin,
+      status: req.body.status,
+    };
+
+    const response = await collection().insertOne(staff);
+
+    if (response.acknowledged) {
+      return res.status(201).json({ id: response.insertedId });
+    } else {
+      return res.status(500).json({ message: "Failed to create staff member" });
+    }
+  } catch (err) {
+    res.status(400).json({
+      message: "Error creating staff member",
+      error: err.message,
     });
-    res.status(201).json(
-      result.ops
-        ? result.ops[0]
-        : {
-            _id: result.insertedId,
-            first_name,
-            last_name,
-            email,
-            phone,
-            position,
-            department,
-            hire_date,
-            salary,
-            is_admin,
-            status,
-          }
-    );
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
-  }
-};
-
-// Get all staff members with optional filters
-exports.getStaff = async (req, res) => {
-  //#swagger.tags=['Staff']
-  const { first_name, last_name, position, department, status } = req.query;
-
-  try {
-    const query = {};
-    if (first_name) query.first_name = { $regex: first_name, $options: "i" };
-    if (last_name) query.last_name = { $regex: last_name, $options: "i" };
-    if (position) query.position = { $regex: position, $options: "i" };
-    if (department) query.department = { $regex: department, $options: "i" };
-    if (status) query.status = status;
-
-    const staff = await collection().find(query).toArray();
-    res.json(staff);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
-  }
-};
-
-// Get a staff member by ID
-exports.getStaffById = async (req, res) => {
-  //#swagger.tags=['Staff']
-  try {
-    const staffMember = await collection().findOne({
-      _id: new ObjectId(req.params.staffId),
-    });
-    if (!staffMember)
-      return res.status(404).json({ msg: "Staff member not found" });
-    res.json(staffMember);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
   }
 };
 
 // Update a staff member
 exports.updateStaff = async (req, res) => {
   //#swagger.tags=['Staff']
-  const {
-    first_name,
-    last_name,
-    email,
-    phone,
-    position,
-    department,
-    hire_date,
-    salary,
-    is_admin,
-    status,
-  } = req.body;
-
   try {
-    const result = await collection().findOneAndUpdate(
-      { _id: new ObjectId(req.params.staffId) },
-      {
-        $set: {
-          first_name,
-          last_name,
-          email,
-          phone,
-          position,
-          department,
-          hire_date,
-          salary,
-          is_admin,
-          status,
-        },
-      },
-      { returnDocument: "after" }
-    );
+    const staffId = new ObjectId(req.params.id);
+    const staff = {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      email: req.body.email,
+      phone: req.body.phone,
+      position: req.body.position,
+      department: req.body.department,
+      hire_date: req.body.hire_date,
+      salary: req.body.salary,
+      is_admin: req.body.is_admin,
+      status: req.body.status,
+    };
 
-    if (!result.value)
-      return res.status(404).json({ msg: "Staff member not found" });
+    const response = await collection().replaceOne({ _id: staffId }, staff);
 
-    res.json(result.value);
+    if (response.matchedCount === 0) {
+      return res.status(404).json({ message: "Staff member not found" });
+    }
+
+    if (response.modifiedCount > 0) {
+      return res.status(204).send();
+    } else {
+      return res
+        .status(200)
+        .json({ message: "No changes made to the staff member" });
+    }
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(400).json({
+      message: "Error updating staff member",
+      error: err.message,
+    });
   }
 };
 
@@ -142,15 +115,18 @@ exports.updateStaff = async (req, res) => {
 exports.deleteStaff = async (req, res) => {
   //#swagger.tags=['Staff']
   try {
-    const result = await collection().deleteOne({
-      _id: new ObjectId(req.params.staffId),
-    });
-    if (result.deletedCount === 0)
-      return res.status(404).json({ msg: "Staff member not found" });
+    const staffId = new ObjectId(req.params.id);
+    const response = await collection().deleteOne({ _id: staffId });
 
-    res.json({ msg: "Staff member deleted" });
+    if (response.deletedCount > 0) {
+      return res.status(204).send();
+    } else {
+      return res.status(404).json({ message: "Staff member not found" });
+    }
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(400).json({
+      message: "Error deleting staff member",
+      error: err.message,
+    });
   }
 };
