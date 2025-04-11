@@ -6,7 +6,7 @@ const saveUser = async (req, res, next) => {
     first_name: "required|string",
     last_name: "required|string",
     email: "required|string|email",
-    gender: " required|string|in:Male,Female",
+    gender: "required|string|in:Male,Female",
     ip_address: "string",
   };
 
@@ -82,8 +82,32 @@ const saveStaff = async (req, res, next) => {
   }
 };
 
+//varidation rule for book
+const saveBook = async (req, res, next) => {
+  const validationRule = {
+    title: "required|string",
+    author: "required|string",
+    status: "string|in:available,borrowed", // optional because default is 'available'
+    location: "required|string",
+  };
+
+  try {
+    await validator(req.body, validationRule);
+    next(); // proceed if validation passes
+  } catch (err) {
+    res.status(412).send({
+      success: false,
+      message: "Book validation failed",
+      data: err,
+    });
+  }
+};
+
+
+
 module.exports = {
   saveUser,
   saveLendingRecord,
   saveStaff,
+  saveBook,
 };
