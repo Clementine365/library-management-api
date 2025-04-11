@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const staffController = require("../controllers/staffController");
-const validation = require("../middleware/validation_Middleware");
+const validation = require("../middleware/validationMiddleware");
 const auth = require("../middleware/authenticate");
 
 // GET all staff (with optional filters)

@@ -278,7 +278,7 @@ BookListResponse: {
 
 
 
-const outputFile = "./swagger-output.json";
+const outputFile = "./swagger.json";
 const endpointsFiles = [
   "./routes/books.js",
   "./routes/users.js",
