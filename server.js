@@ -95,6 +95,13 @@ passport.deserializeUser((user, done) => {
 //                ROUTES
 // =======================================================
 
+// -------- Swagger Docs Route --------
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger-output.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
+
+
 // -------- OAuth GitHub Callback --------
 app.get(
   '/github/callback',
