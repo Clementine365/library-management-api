@@ -10,8 +10,8 @@ const doc = {
       email: "support@librarymanagement.example",
     },
   },
-  host: "localhost:3000",
-  schemes: ["http"],
+  host: "library-management-api-hhs9.onrender.com",
+  schemes: ["https"],
   tags: [
     {
       name: "Books",

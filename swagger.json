@@ -9,7 +9,7 @@
       "email": "support@librarymanagement.example"
     }
   },
-  "host": "localhost:3000",
+  "host": "library-management-api-hhs9.onrender.com",
   "basePath": "/",
   "tags": [
     {
@@ -30,7 +30,7 @@
     }
   ],
   "schemes": [
-    "http"
+    "https"
   ],
   "securityDefinitions": {
     "GitHubOAuth": {
