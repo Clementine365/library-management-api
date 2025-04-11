@@ -4,12 +4,11 @@ const ObjectId = require('mongodb').ObjectId;
 const getAll = async (req, res) => {
     //#swagger.tags=['Lending Record']
     try {
-      const result = await mongodb
-        .getDatabase()
-        .db()
-        .collection('LendingRecords')
-        .find();
-  
+    const result = await mongodb
+      .getDb()
+      .collection("LendingRecords")
+      .find();
+
       const Lendingrecord = await result.toArray();
       res.status(200).json(lendingRecord);
     } catch (err) {
@@ -24,11 +23,10 @@ const getAll = async (req, res) => {
     try {
       const recordId = new ObjectId(req.params.id);
       const result = await mongodb
-        .getDatabase()
-        .db('')
-        .collection('LendingRecords')
+        .getDb()
+        .collection("LendingRecords")
         .find({ _id: recordId });
-  
+
       const authors = await result.toArray();
       if (!authors.length) {
         return res.status(404).json({ message: 'Lending Record not found' });
@@ -56,11 +54,10 @@ const getAll = async (req, res) => {
       };
   
       const response = await mongodb
-        .getDatabase()
-        .db('')
-        .collection('LendingRecords')
+        .getDb()
+        .collection("LendingRecords")
         .insertOne(lendingRecord);
-  
+
       if (response.acknowledged) {
         return res.status(201).json({ id: response.insertedId });
       } else {
@@ -87,11 +84,10 @@ const getAll = async (req, res) => {
       };
   
       const response = await mongodb
-        .getDatabase()
-        .db('')
-        .collection('LendingRecords')
+        .getDb()
+        .collection("LendingRecords")
         .replaceOne({ _id: recordId }, lendingRecord);
-  
+
       if (response.matchedCount === 0) {
         return res.status(404).json({ message: 'Lending Record not found' });
       }
@@ -113,9 +109,8 @@ const getAll = async (req, res) => {
     try {
       const recordId = new ObjectId(req.params.id);
       const response = await mongodb
-        .getDatabase()
-        .db()
-        .collection('LendingRecords') 
+        .getDb()
+        .collection("LendingRecords")
         .deleteOne({ _id: recordId });
   
       if (response.deletedCount > 0) {
