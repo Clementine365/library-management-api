@@ -1,4 +1,14 @@
-const Validator = require('validatorjs');
+const Validator = require("validatorjs");
+const { ObjectId } = require("mongodb");
+
+// Register custom validation rule for MongoDB ObjectId
+Validator.register(
+  "objectId",
+  function (value) {
+    return ObjectId.isValid(value);
+  },
+  "The :attribute must be a valid MongoDB ObjectId."
+);
 
 /**
  * Validates request data using validatorjs.
@@ -10,7 +20,7 @@ const Validator = require('validatorjs');
  */
 const validator = async (body, rules, customMessages = {}) => {
   if (!Validator) {
-    throw new Error('ValidatorJS is not properly imported');
+    throw new Error("ValidatorJS is not properly imported");
   }
 
   const validation = new Validator(body, rules, customMessages);

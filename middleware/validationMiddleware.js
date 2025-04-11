@@ -24,26 +24,27 @@ const saveUser = async (req, res, next) => {
   }
 };
 
-const saveLendingRecord = (req, res, next) => {
+const saveLendingRecord = async (req, res, next) => {
   try {
     const validationRule = {
-      userId: "required|ObjectId",
-      bookId: "required|string",
-      nationality: "required|string",
-      genres: "required|array", // fixed typo: 'require' → 'required'
-      bio: "required|string",
+      userId: "required|objectId",
+      bookId: "required|objectId",
+      lentDate: "required|date",
+      dueDate: "required|date",
+      returnDate: "date",
+      status: "required|string|in:borrowed,returned,overdue",
     };
 
-    validator(req.body, validationRule, {}, (err, status) => {
-      if (!status) {
-        return res.status(412).send({
-          success: false,
-          message: "Validation failed",
-          data: err,
-        });
-      }
+    try {
+      await validator(req.body, validationRule);
       next();
-    });
+    } catch (err) {
+      return res.status(412).send({
+        success: false,
+        message: "Lending record validation failed",
+        data: err,
+      });
+    }
   } catch (error) {
     res.status(400).json({
       success: false,
@@ -102,8 +103,6 @@ const saveBook = async (req, res, next) => {
     });
   }
 };
-
-
 
 module.exports = {
   saveUser,

@@ -6,7 +6,7 @@ const getAll = async (req, res) => {
   //#swagger.tags = ['users']
 
   try {
-    const db = mongodb.getDatabase().db("team13_project");
+    const db = mongodb.getDb();
     const lists = await db.collection("users").find().toArray();
 
     res.setHeader("Content-Type", "application/json");
@@ -29,7 +29,7 @@ const getsingle = async (req, res) => {
   try {
     // Convert the car ID to an ObjectId
     const userId = new ObjectId(req.params.id);
-    const db = mongodb.getDatabase().db("team13_project");
+    const db = mongodb.getDb();
 
     // Try to find the user in the database
     const result = await db.collection("users").find({ _id: userId }).toArray();
@@ -59,8 +59,7 @@ const createUser = async (req, res) => {
     ip_address: req.body.ip_address,
   };
   const response = await mongodb
-    .getDatabase()
-    .db("team13_project")
+    .getDb()
     .collection("users")
     .insertOne(user);
   if (response.acknowledged) {
@@ -87,8 +86,7 @@ const updateUser = async (req, res) => {
     ip_address: req.body.ip_address,
   };
   const response = await mongodb
-    .getDatabase()
-    .db("team13_project")
+    .getDb()
     .collection("users")
     .replaceOne({ _id: userId }, user);
   if (response.modifiedCount > 0) {
@@ -117,8 +115,7 @@ const deleteUser = async (req, res) => {
 
     // Perform the delete operation
     const response = await mongodb
-      .getDatabase()
-      .db("team13_project")
+      .getDb()
       .collection("users")
       .deleteOne({ _id: objectId });
 
