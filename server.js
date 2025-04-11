@@ -8,17 +8,10 @@ const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const GitHubStrategy = require('passport-github2').Strategy;
-<<<<<<< Updated upstream
 const cors = require('cors');
-=======
-
-const mongodb = require('./config/db'); 
 const indexRoutes = require('./routes/index'); 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-
-const app = express();
->>>>>>> Stashed changes
 const port = process.env.PORT || 3000;
 const setupSwagger = require('./config/swagger');
 
@@ -63,36 +56,23 @@ app
   .use(cors({ origin: '*' }))
   .use('/', require('./routes/index.js'));
 
-<<<<<<< Updated upstream
-=======
+
 // -------- Swagger UI --------
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // -------- Session Configuration --------
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: true, 
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URL, // Changed from MONGODB_URI to match your .env
-      dbName: process.env.DB_NAME,
-      ttl: 14 * 24 * 60 * 60, // 14 days
-      autoRemove: 'native',
-      touchAfter: 24 * 3600 // Only update the session every 24 hours unless the data changes
-    }),
-  })
-);
->>>>>>> Stashed changes
+// -------- Swagger UI --------
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// -------- Passport GitHub Strategy --------
 passport.use(
   new GitHubStrategy(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.CALLBACK_URL      
+      callbackURL: process.env.CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

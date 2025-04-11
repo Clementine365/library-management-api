@@ -1,20 +1,15 @@
 const passport = require('passport')
 const router = require('express').Router();
 
-<<<<<<< Updated upstream
 // Router for users
 
 // Router for staff
 
 // Router for books
+router.use('/books', require('./books'));
 
 // Router for lending records
 router.use('/', require('./swagger'));
-
-router.use('/books', booksRoutes);
-=======
-router.use('/books', require('./books'));
->>>>>>> Stashed changes
 router.use('/users', require('./users'));
 
 router.get('/login', passport.authenticate('github'), (req, res) => {});
