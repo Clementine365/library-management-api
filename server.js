@@ -1,19 +1,20 @@
 // =======================================================
 //                IMPORTS & INITIAL SETUP
 // =======================================================
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const session = require('express-session');
-const passport = require('passport');
-const MongoStore = require('connect-mongo');
-const mongoose = require('mongoose');
-const GitHubStrategy = require('passport-github2').Strategy;
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const session = require("express-session");
+const passport = require("passport");
+const MongoStore = require("connect-mongo");
+const mongoose = require("mongoose");
+const GitHubStrategy = require("passport-github2").Strategy;
 
-const mongodb = require('./config/db'); 
-const indexRoutes = require('./routes/index'); 
+const mongodb = require("./config/db");
+const indexRoutes = require("./routes/index");
+const userCollections = require("./controllers/userCollections");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,8 +29,8 @@ app.use(bodyParser.json());
 // -------- CORS --------
 app.use(
   cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
   })
 );
 
@@ -38,7 +39,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true, 
+    saveUninitialized: true,
     store: MongoStore.create({
       mongoUrl: process.env.MONGODB_URI,
       ttl: 14 * 24 * 60 * 60, // 14 days
@@ -52,12 +53,15 @@ app.use(passport.session());
 
 // -------- Manual CORS Headers (Optional Redundancy) --------
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, x-Requested-with, Content-Type, Accept, z-Key'
+    "Access-Control-Allow-Headers",
+    "Origin, x-Requested-with, Content-Type, Accept, z-Key"
   );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, POST, PUT, DELETE, OPTIONS');
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, PATCH, POST, PUT, DELETE, OPTIONS"
+  );
   next();
 });
 
@@ -104,24 +108,33 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // -------- OAuth GitHub Callback --------
 app.get(
-  '/github/callback',
-  passport.authenticate('github', {
-    failureRedirect: '/api-docs',
+  "/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/api-docs",
     session: false,
   }),
   (req, res) => {
     req.session.user = req.user;
-    res.redirect('/');
+    res.redirect("/");
   }
 );
 
 // -------- API Routes --------
-app.use('/', indexRoutes);
+app.use("/", indexRoutes);
 
 // -------- Root Redirect to Swagger --------
 // NOTE: You can choose between this or the "Logged in as" route
-app.get('/', (req, res) => {
-  res.redirect('/api-docs');
+app.get("/", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login"); // GitHub OAuth login
+  }
+
+  const user = req.session.user;
+  res.send(`
+    <h1>Welcome to the Library Management App</h1>
+    <p>You are logged in as <strong>${user.displayName || user.username || user.login}</strong></p>
+    <p><a href="/api-docs">View API Documentation</a></p>
+  `);
 });
 
 // =======================================================
@@ -129,8 +142,11 @@ app.get('/', (req, res) => {
 // =======================================================
 
 // -------- Uncaught Exception Logger --------
-process.on('uncaughtException', (err, origin) => {
-  console.log(process.stderr.fd, `Caught exception: ${err}\n` + `Exception origin: ${origin}`);
+process.on("uncaughtException", (err, origin) => {
+  console.log(
+    process.stderr.fd,
+    `Caught exception: ${err}\n` + `Exception origin: ${origin}`
+  );
 });
 
 // =======================================================
