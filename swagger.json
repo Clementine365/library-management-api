@@ -481,10 +481,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "userId": {
+                "userEmail": {
                   "example": "any"
                 },
-                "bookId": {
+                "bookTitle": {
                   "example": "any"
                 },
                 "lentDate": {
@@ -563,10 +563,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "userId": {
+                "userEmail": {
                   "example": "any"
                 },
-                "bookId": {
+                "bookTitle": {
                   "example": "any"
                 },
                 "lentDate": {

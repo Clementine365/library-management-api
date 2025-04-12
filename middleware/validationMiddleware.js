@@ -27,8 +27,8 @@ const saveUser = async (req, res, next) => {
 const saveLendingRecord = async (req, res, next) => {
   try {
     const validationRule = {
-      userId: "required|objectId",
-      bookId: "required|objectId",
+      userEmail: "required|string",
+      bookTitle: "required|string",
       lentDate: "required|date",
       dueDate: "required|date",
       returnDate: "date",

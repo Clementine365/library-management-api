@@ -46,8 +46,8 @@ const getAll = async (req, res) => {
     //#swagger.tags=['Lending Record']
     try {
       const lendingRecord = {
-        userId: req.body.userId,
-        bookId: req.body.bookId,
+        userEmail: req.body.userEmail,
+        bookTitle: req.body.bookTitle,
         lentDate: req.body.lentDate,
         dueDate: req.body.dueDate,
         returnDate: req.body.returnDate,
@@ -76,8 +76,8 @@ const getAll = async (req, res) => {
     try {
       const recordId = new ObjectId(req.params.id);
       const lendingRecord = {
-        userId: req.body.userId,
-        bookId: req.body.bookId,
+        userEmail: req.body.userEmail,
+        bookTitle: req.body.bookTitle,
         lentDate: req.body.lentDate,
         dueDate: req.body.dueDate,
         returnDate: req.body.returnDate,
