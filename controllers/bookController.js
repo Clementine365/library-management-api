@@ -75,35 +75,35 @@ exports.getBookById = async (req, res) => {
 
 // Update a book
 exports.updateBook = async (req, res) => {
-  //#swagger.tags=['Books']
-  const { title, author, status, location } = req.body;
+  //#swagger.tags = ['Books']
+
+  const bookId = req.params.bookId;
+
+  if (!ObjectId.isValid(bookId)) {
+    return res.status(400).json({ msg: 'Must use a valid Book ID' });
+  }
+
+  const updatedBook = {
+    title: req.body.title,
+    author: req.body.author,
+    status: req.body.status,
+    location: req.body.location
+  };
 
   try {
-    // Get ID from either bookId or id parameter
-    const bookId = req.params.bookId || req.params.id;
+    const response = await mongodb
+      .getDb()
+      .collection('books')
+      .replaceOne({ _id: new ObjectId(bookId) }, updatedBook);
 
-    // Validate that we have an ID
-    if (!bookId) {
-      return res.status(400).json({ msg: "Book ID is required" });
+    if (response.modifiedCount > 0) {
+      return res.status(204).send(); // Success, no content
+    } else {
+      return res.status(404).json({ msg: 'Book not found or nothing to update' });
     }
-
-    // Validate that the ID is a valid ObjectId
-    if (!ObjectId.isValid(bookId)) {
-      return res.status(400).json({ msg: "Invalid book ID format" });
-    }
-
-    const result = await collection().findOneAndUpdate(
-      { _id: new ObjectId(bookId) },
-      { $set: { title, author, status, location } },
-      { returnDocument: "after" }
-    );
-
-    if (!result.value) return res.status(404).json({ msg: "Book not found" });
-
-    res.json(result.value);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ msg: 'Server error' });
   }
 };
 
