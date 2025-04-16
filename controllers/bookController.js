@@ -76,36 +76,43 @@ exports.getBookById = async (req, res) => {
 // Update a book
 exports.updateBook = async (req, res) => {
   //#swagger.tags=['Books']
-  const { title, author, status, location } = req.body;
+  const bookId = req.params.bookId;
+
+  // Validate ID
+  if (!ObjectId.isValid(bookId)) {
+    return res.status(400).json({ msg: 'Must use a valid Book ID' });
+  }
+
+  const updatedBook = {
+    title: req.body.title,
+    author: req.body.author,
+    status: req.body.status,
+    location: req.body.location,
+  };
 
   try {
-    // Get ID from either bookId or id parameter
-    const bookId = req.params.bookId || req.params.id;
-
-    // Validate that we have an ID
-    if (!bookId) {
-      return res.status(400).json({ msg: "Book ID is required" });
-    }
-
-    // Validate that the ID is a valid ObjectId
-    if (!ObjectId.isValid(bookId)) {
-      return res.status(400).json({ msg: "Invalid book ID format" });
-    }
-
-    const result = await collection().findOneAndUpdate(
+    const response = await collection().replaceOne(
       { _id: new ObjectId(bookId) },
-      { $set: { title, author, status, location } },
-      { returnDocument: "after" }
+      updatedBook
     );
 
-    if (!result.value) return res.status(404).json({ msg: "Book not found" });
+    if (response.matchedCount === 0) {
+      return res.status(404).json({ msg: "Book not found" });
+    }
 
-    res.json(result.value);
+    if (response.modifiedCount > 0) {
+      return res.status(204).send(); // Success, no content
+    } else {
+      return res
+        .status(200)
+        .json({ msg: "No changes made to the book" });
+    }
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ msg: "Error updating book", error: err.message });
   }
 };
+
 
 // Delete a book
 exports.deleteBook = async (req, res) => {
