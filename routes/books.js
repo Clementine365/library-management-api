@@ -2,10 +2,16 @@
 
 const express = require("express");
 const router = express.Router();
+<<<<<<< HEAD
 const bookController = require("../controllers/bookController");
 const { saveBook } = require("../middleware/validationMiddleware");
 const auth = require("../middleware/authenticate");
 
+=======
+const bookController = require('../controllers/bookController');
+const { saveBook } = require('../middleware/validation_Middleware');
+const auth = require('../middleware/authenticate'); 
+>>>>>>> 17b773bb5cd2732c04a20648213bd759e99d4b5f
 
 // Route to create a new book with authentication and validation
 router.post(

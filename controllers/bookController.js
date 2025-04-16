@@ -75,6 +75,30 @@ exports.getBookById = async (req, res) => {
 
 // Update a book
 exports.updateBook = async (req, res) => {
+  //#swagger.tags=['Books']
+  try {
+    const bookId = new ObjectId(req.params.bookId);
+    const book = {
+      title: req.body.title,
+      author: req.body.author,
+      status: req.body.status,
+      location: req.body.location,
+      // Add more fields here if your Book schema includes them
+    };
+
+    const response = await collection().replaceOne({ _id: bookId }, book);
+
+    if (response.matchedCount === 0) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    if (response.modifiedCount > 0) {
+      return res.status(204).send();
+    } else {
+      return res
+        .status(200)
+        .json({ message: "No changes made to the book" });
+    }
   //#swagger.tags = ['Books']
 
   const bookId = req.params.bookId;
@@ -102,10 +126,13 @@ exports.updateBook = async (req, res) => {
       return res.status(404).json({ msg: 'Book not found or nothing to update' });
     }
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(400).json({
+      message: "Error updating book",
+      error: err.message,
+    });
   }
 };
+
 
 // Delete a book
 exports.deleteBook = async (req, res) => {
