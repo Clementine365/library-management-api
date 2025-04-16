@@ -24,13 +24,32 @@ router.get("/test-login", (req, res) => {
   });
 });
 
-router.get("/logout", function (req, res, next) {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
+router.get("/logout", (req, res, next) => {
+  if (req.session) {
+    // Destroy the session
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Could not log out",
+          error: err.message
+        });
+      }
+      
+      // Clear the session cookie
+      res.clearCookie('connect.sid');
+      
+      return res.status(200).json({
+        success: true,
+        message: "Successfully logged out"
+      });
+    });
+  } else {
+    return res.status(200).json({
+      success: true,
+      message: "No active session to logout"
+    });
+  }
 });
 
 module.exports = router;
