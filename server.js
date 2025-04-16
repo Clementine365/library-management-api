@@ -1,7 +1,9 @@
 // =======================================================
 //                IMPORTS & INITIAL SETUP
 // =======================================================
-require("dotenv").config();
+require("dotenv").config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -43,6 +45,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.MONGODB_URI,
       ttl: 14 * 24 * 60 * 60, // 14 days
+      autoRemove: "native",
     }),
   })
 );
@@ -154,10 +157,14 @@ mongodb.initDb((err) => {
   if (err) {
     console.log(err);
   } else {
-    app.listen(port, () => {
-      console.log(`✅ Database connected`);
-      console.log(`🚀 Server running on port ${port}`);
-      console.log(`📚 Swagger docs at http://localhost:${port}/api-docs`);
-    });
+    if (process.env.NODE_ENV !== "test") {
+      app.listen(port, () => {
+        console.log("✅ Database connected");
+        console.log(`🚀 Server running on port ${port}`);
+        console.log(`📚 Swagger docs at http://localhost:${port}/api-docs`);
+      });
+    }
   }
 });
+
+module.exports = app;

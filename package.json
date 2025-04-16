@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_ENV=test jest --setupFiles dotenv/config",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --setupFiles dotenv/config",
     "start": "node server.js",
     "dev": "nodemon server.js",
     "generate-docs": "node ./swagger-autogen.js"
@@ -37,7 +38,10 @@
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^6.3.4"
   },
   "description": "",
   "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"
