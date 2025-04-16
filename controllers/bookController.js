@@ -76,33 +76,9 @@ exports.getBookById = async (req, res) => {
 // Update a book
 exports.updateBook = async (req, res) => {
   //#swagger.tags=['Books']
-  try {
-    const bookId = new ObjectId(req.params.bookId);
-    const book = {
-      title: req.body.title,
-      author: req.body.author,
-      status: req.body.status,
-      location: req.body.location,
-      // Add more fields here if your Book schema includes them
-    };
-
-    const response = await collection().replaceOne({ _id: bookId }, book);
-
-    if (response.matchedCount === 0) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-
-    if (response.modifiedCount > 0) {
-      return res.status(204).send();
-    } else {
-      return res
-        .status(200)
-        .json({ message: "No changes made to the book" });
-    }
-  //#swagger.tags = ['Books']
-
   const bookId = req.params.bookId;
 
+  // Validate ID
   if (!ObjectId.isValid(bookId)) {
     return res.status(400).json({ msg: 'Must use a valid Book ID' });
   }
@@ -111,25 +87,29 @@ exports.updateBook = async (req, res) => {
     title: req.body.title,
     author: req.body.author,
     status: req.body.status,
-    location: req.body.location
+    location: req.body.location,
   };
 
   try {
-    const response = await mongodb
-      .getDb()
-      .collection('books')
-      .replaceOne({ _id: new ObjectId(bookId) }, updatedBook);
+    const response = await collection().replaceOne(
+      { _id: new ObjectId(bookId) },
+      updatedBook
+    );
+
+    if (response.matchedCount === 0) {
+      return res.status(404).json({ msg: "Book not found" });
+    }
 
     if (response.modifiedCount > 0) {
       return res.status(204).send(); // Success, no content
     } else {
-      return res.status(404).json({ msg: 'Book not found or nothing to update' });
+      return res
+        .status(200)
+        .json({ msg: "No changes made to the book" });
     }
   } catch (err) {
-    res.status(400).json({
-      message: "Error updating book",
-      error: err.message,
-    });
+    console.error(err.message);
+    res.status(500).json({ msg: "Error updating book", error: err.message });
   }
 };
 
